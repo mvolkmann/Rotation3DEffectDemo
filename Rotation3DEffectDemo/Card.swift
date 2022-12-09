@@ -10,8 +10,11 @@ struct Card<V1, V2, V3, V4>: View
     @ViewBuilder let backBg: V3
     @ViewBuilder let backFg: V4
 
-    @State private var backDegrees = 90.0
-    @State private var frontDegrees = 0.0
+    // backDegrees is always 90 more than frontDegrees.
+    @State private var backDegrees = 90.0 // goes from 90 to 0
+    @State private var frontDegrees = 0.0 // goes from 0 to -90
+
+    @State private var dragAmount = CGSize.zero
     @State private var isFlipped = false
 
     let cardHeight = 300.0
@@ -44,6 +47,28 @@ struct Card<V1, V2, V3, V4>: View
         .onTapGesture {
             flip()
         }
+        .gesture(
+            DragGesture()
+                .onChanged {
+                    let size = $0.translation // type is CGSize
+                    let percent = -size.width / 80
+                    let bounded = max(min(percent, 1), 0)
+                    isFlipped = frontDegrees <= -90
+                    let delta = percent * 90
+                    if isFlipped {
+                        frontDegrees = -90
+                        backDegrees = delta
+                    } else {
+                        backDegrees = 90
+                        frontDegrees = -delta
+                    }
+                }
+                .onEnded { _ in
+                    withAnimation(.spring()) {
+                        dragAmount = .zero
+                    }
+                }
+        )
     }
 
     private func flip() {
