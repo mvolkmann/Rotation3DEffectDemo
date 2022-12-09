@@ -1,5 +1,8 @@
 import SwiftUI
 
+// This requires four ViewBuilder arguments.
+// Since each can return a different kind of View,
+// we need four generic parameters to represent their types.
 struct Card<V1, V2, V3, V4>: View
     where V1: View, V2: View, V3: View, V4: View {
     @ViewBuilder let frontBg: V1
