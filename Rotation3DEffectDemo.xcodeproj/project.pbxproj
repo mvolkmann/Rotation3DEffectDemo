@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A382CA129402B76003F9ED1 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A382CA029402B76003F9ED1 /* Card.swift */; };
 		1ABBA54A293ECB66000711E8 /* Rotation3DEffectDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ABBA549293ECB66000711E8 /* Rotation3DEffectDemoApp.swift */; };
 		1ABBA54C293ECB66000711E8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ABBA54B293ECB66000711E8 /* ContentView.swift */; };
 		1ABBA54E293ECB68000711E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1ABBA54D293ECB68000711E8 /* Assets.xcassets */; };
@@ -14,6 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1A382CA029402B76003F9ED1 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		1ABBA546293ECB66000711E8 /* Rotation3DEffectDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rotation3DEffectDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1ABBA549293ECB66000711E8 /* Rotation3DEffectDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rotation3DEffectDemoApp.swift; sourceTree = "<group>"; };
 		1ABBA54B293ECB66000711E8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -53,6 +55,7 @@
 			children = (
 				1ABBA549293ECB66000711E8 /* Rotation3DEffectDemoApp.swift */,
 				1ABBA54B293ECB66000711E8 /* ContentView.swift */,
+				1A382CA029402B76003F9ED1 /* Card.swift */,
 				1ABBA54D293ECB68000711E8 /* Assets.xcassets */,
 				1ABBA54F293ECB68000711E8 /* Preview Content */,
 			);
@@ -138,6 +141,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1ABBA54C293ECB66000711E8 /* ContentView.swift in Sources */,
+				1A382CA129402B76003F9ED1 /* Card.swift in Sources */,
 				1ABBA54A293ECB66000711E8 /* Rotation3DEffectDemoApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
