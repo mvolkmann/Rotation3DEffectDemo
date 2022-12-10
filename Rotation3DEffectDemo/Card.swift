@@ -59,28 +59,32 @@ struct Card<V1, V2, V3, V4>: View
                     let startX = $0.startLocation.x
                     let swipingLeft = startX > cardWidth / 2
 
-                    let fullDistance = (startX - cardWidth / 2)
+                    let fullDistance = (startX - cardWidth / 2) * 2
                     let percent = (startX - x) / fullDistance
                     let boundedPercent = max(min(percent, 1), 0)
-                    let deltaDegrees = boundedPercent * 90
+                    let deltaDegrees = boundedPercent * 90 * 2
 
+                    print("isFlipped = \(isFlipped)")
                     if isFlipped {
-                        frontDegrees = 90
-                        backDegrees = deltaDegrees * (swipingLeft ? -1 : 1)
+                        // frontDegrees = 90 * (swipingLeft ? -1 : 1)
+                        backDegrees = (360 - deltaDegrees) *
+                            (swipingLeft ? 1 : -1)
                         print("backDegrees = \(backDegrees)")
                         /*
-                         if abs(backDegrees) == 90 {
+                         if abs(backDegrees) >= 90 {
+                             frontDegrees = 90 * (swipingLeft ? 1 : -1)
+                             backDegrees = 90 * (swipingLeft ? -1 : 1)
                              isFlipped = false
-                             frontDegrees = -89
                          }
                           */
                     } else {
-                        backDegrees = 90
+                        // backDegrees = 90 * (swipingLeft ? 1 : -1)
                         frontDegrees = deltaDegrees * (swipingLeft ? -1 : 1)
                         print("frontDegrees = \(frontDegrees)")
-                        if abs(frontDegrees) == 90 {
+                        if abs(frontDegrees) >= 90 {
+                            backDegrees = 90 * (swipingLeft ? 1 : -1)
+                            frontDegrees = 90 * (swipingLeft ? -1 : 1)
                             isFlipped = true
-                            backDegrees = -89
                         }
                     }
                 }
