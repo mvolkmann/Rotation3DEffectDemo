@@ -68,12 +68,20 @@ struct Card<V1, V2, V3, V4>: View
                         frontDegrees = 90
                         backDegrees = deltaDegrees * (swipingLeft ? -1 : 1)
                         print("backDegrees = \(backDegrees)")
-                        if abs(backDegrees) == 90 { isFlipped = false }
+                        /*
+                         if abs(backDegrees) == 90 {
+                             isFlipped = false
+                             frontDegrees = -89
+                         }
+                          */
                     } else {
                         backDegrees = 90
                         frontDegrees = deltaDegrees * (swipingLeft ? -1 : 1)
                         print("frontDegrees = \(frontDegrees)")
-                        if abs(frontDegrees) == 90 { isFlipped = true }
+                        if abs(frontDegrees) == 90 {
+                            isFlipped = true
+                            backDegrees = -89
+                        }
                     }
                 }
                 .onEnded { _ in
