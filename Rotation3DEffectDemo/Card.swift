@@ -51,32 +51,46 @@ struct Card<V1, V2, V3, V4>: View
         .onTapGesture {
             flip()
         }
-        /*
-         .gesture(
-             DragGesture()
-                 .onChanged {
-                     let size = $0.translation // type is CGSize
-                     // TODO: Base the percentage on distance from horizontal center of card.
-                     // TODO: Treat left and right drags differently.
-                     let percent = -size.width / 80
-                     let bounded = max(min(percent, 1), 0)
-                     isFlipped = frontDegrees <= -90
-                     let delta = percent * 90
-                     if isFlipped {
-                         frontDegrees = -90
-                         backDegrees = delta
-                     } else {
-                         backDegrees = 90
-                         frontDegrees = -delta
-                     }
-                 }
-                 .onEnded { _ in
-                     withAnimation(.spring()) {
-                         dragAmount = .zero
-                     }
-                 }
-         )
-         */
+        .gesture(
+            DragGesture()
+                .onChanged {
+                    let x = $0.location.x
+                    guard x >= 0, x <= cardWidth else { return }
+
+                    let startX = $0.startLocation.x
+                    let swipingLeft = startX > cardWidth / 2
+
+                    let fullDistance = (startX - cardWidth / 2)
+                    let percent = (startX - x) / fullDistance
+                    let boundedPercent = max(min(percent, 1), 0)
+
+                    print("frontDegrees =", frontDegrees)
+                    print("backDegrees =", backDegrees)
+                    if isFlipped {
+                        if backDegrees == 90 { isFlipped = false }
+                    } else {
+                        if frontDegrees == 90 { isFlipped = true }
+                    }
+                    print("isFlipped =", isFlipped)
+
+                    // let delta = boundedPercent * 90 * (isFlipped ? 1 : -1)
+                    // This works on front side, but not back.
+                    let deltaDegrees = boundedPercent * 90 *
+                        (swipingLeft ? -1 : 1) * (isFlipped ? -1 : 1)
+                    if isFlipped {
+                        frontDegrees = 90
+                        backDegrees = deltaDegrees
+                    } else {
+                        backDegrees = 90
+                        frontDegrees = deltaDegrees
+                    }
+                }
+                .onEnded { _ in
+                    withAnimation(.spring()) {
+                        dragAmount = .zero
+                    }
+                }
+        )
     }
 
     private func flip() {
