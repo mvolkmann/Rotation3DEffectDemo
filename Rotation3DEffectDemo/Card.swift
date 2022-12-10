@@ -14,7 +14,6 @@ struct Card<V1, V2, V3, V4>: View
     @State private var backDegrees = 90.0 // goes from 90 to 0
     @State private var frontDegrees = 0.0 // goes from 0 to -90
 
-    @State private var dragAmount = CGSize.zero
     @State private var isFlipped = false
 
     typealias Axis = (x: CGFloat, y: CGFloat, z: CGFloat)
@@ -63,31 +62,27 @@ struct Card<V1, V2, V3, V4>: View
                     let fullDistance = (startX - cardWidth / 2)
                     let percent = (startX - x) / fullDistance
                     let boundedPercent = max(min(percent, 1), 0)
+                    let deltaDegrees = boundedPercent * 90
 
-                    print("frontDegrees =", frontDegrees)
-                    print("backDegrees =", backDegrees)
-                    if isFlipped {
-                        if backDegrees == 90 { isFlipped = false }
-                    } else {
-                        if frontDegrees == 90 { isFlipped = true }
-                    }
-                    print("isFlipped =", isFlipped)
-
-                    // let delta = boundedPercent * 90 * (isFlipped ? 1 : -1)
-                    // This works on front side, but not back.
-                    let deltaDegrees = boundedPercent * 90 *
-                        (swipingLeft ? -1 : 1) * (isFlipped ? -1 : 1)
                     if isFlipped {
                         frontDegrees = 90
-                        backDegrees = deltaDegrees
+                        backDegrees = deltaDegrees * (swipingLeft ? -1 : 1)
+                        print("backDegrees = \(backDegrees)")
+                        if abs(backDegrees) == 90 { isFlipped = false }
                     } else {
                         backDegrees = 90
-                        frontDegrees = deltaDegrees
+                        frontDegrees = deltaDegrees * (swipingLeft ? -1 : 1)
+                        print("frontDegrees = \(frontDegrees)")
+                        if abs(frontDegrees) == 90 { isFlipped = true }
                     }
                 }
                 .onEnded { _ in
                     withAnimation(.spring()) {
-                        dragAmount = .zero
+                        if isFlipped {
+                            backDegrees = 0
+                        } else {
+                            frontDegrees = 0
+                        }
                     }
                 }
         )
