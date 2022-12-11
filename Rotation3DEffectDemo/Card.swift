@@ -84,7 +84,7 @@ struct Card<V1, V2, V3, V4>: View
                             } else {
                                 backDegrees = 180 - deltaDegrees
                             }
-                            if backDegrees < -90 { currentlyFlipped = true }
+                            if backDegrees < -90 { currentlyFlipped = false }
                         } else {
                             frontDegrees = 90
                             if initiallyFlipped {
@@ -92,7 +92,7 @@ struct Card<V1, V2, V3, V4>: View
                             } else {
                                 backDegrees = deltaDegrees - 180
                             }
-                            if backDegrees > 90 { currentlyFlipped = true }
+                            if backDegrees > 90 { currentlyFlipped = false }
                         }
                         print("backDegrees = \(backDegrees)")
                     } else {
@@ -107,7 +107,7 @@ struct Card<V1, V2, V3, V4>: View
                         } else {
                             backDegrees = 90
                             if initiallyFlipped {
-                                frontDegrees = 180 - deltaDegrees
+                                frontDegrees = deltaDegrees - 180
                             } else {
                                 frontDegrees = deltaDegrees
                             }
