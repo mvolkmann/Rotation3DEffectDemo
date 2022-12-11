@@ -16,6 +16,7 @@ struct Card<V1, V2, V3, V4>: View
 
     @State private var currentlyFlipped = false
     @State private var initiallyFlipped: Bool?
+    @State private var lastX = 0.0
 
     let cardHeight = 400.0
     // A standard playing card is 2.5" wide and 3.5" tall.
@@ -55,17 +56,31 @@ struct Card<V1, V2, V3, V4>: View
         .gesture(
             DragGesture()
                 .onChanged {
-                    if initiallyFlipped ==
-                        nil { initiallyFlipped = currentlyFlipped }
+                    if initiallyFlipped == nil {
+                        initiallyFlipped = currentlyFlipped
+                    }
 
-                    let x = $0.location.x
-                    guard x >= 0, x <= cardWidth else { return }
+                    let newX = $0.location.x
+                    guard newX >= 0, newX <= cardWidth else { return }
+
+                    let movingLeft = newX < lastX
+                    lastX = newX
 
                     let startX = $0.startLocation.x
-                    let swipingLeft = startX > cardWidth / 2
+                    var swipingLeft = startX > cardWidth / 2
+
+                    // TODO: This is supposed to handle reversing the
+                    // TODO: swipe direction in the middle of a swipe,
+                    // TODO: but it is not correct.
+                    /*
+                     if swipingLeft != movingLeft {
+                         swipingLeft.toggle()
+                         initiallyFlipped = !currentlyFlipped
+                     }
+                     */
 
                     let fullDistance = (startX - cardWidth / 2) * 2
-                    let percent = (startX - x) / fullDistance
+                    let percent = (startX - newX) / fullDistance
                     let boundedPercent = max(min(percent, 1), 0)
                     let deltaDegrees = boundedPercent * 90 * 2
 
