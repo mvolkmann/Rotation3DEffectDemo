@@ -18,13 +18,14 @@ struct Card<V1, V2, V3, V4>: View
     @State private var initiallyFlipped = true
     @State private var newDrag = true
 
-    typealias Axis = (x: CGFloat, y: CGFloat, z: CGFloat)
-
-    let axis: Axis = (x: 0, y: 1, z: 0)
-    let cardHeight = 300.0
-    let cardWidth = 200.0
+    let cardHeight = 400.0
+    // A standard playing card is 2.5" wide and 3.5" tall.
+    var cardWidth: Double { cardHeight * 2.5 / 3.5 }
     let cornerRadius = 20.0
     let duration: CGFloat = 0.3
+
+    typealias Axis = (x: CGFloat, y: CGFloat, z: CGFloat)
+    let axis: Axis = (x: 0, y: 1, z: 0)
 
     var body: some View {
         ZStack {
@@ -68,14 +69,6 @@ struct Card<V1, V2, V3, V4>: View
                     let boundedPercent = max(min(percent, 1), 0)
                     let deltaDegrees = boundedPercent * 90 * 2
 
-                    // There are four cases to consider:
-                    // 1) not flipped and swiping left
-                    // 2) not flipped and swiping right
-                    // 3) flipped and swiping left
-                    // 4) flipped and swiping right
-                    print("initiallyFlipped = \(initiallyFlipped)")
-                    print("currentlyFlipped = \(currentlyFlipped)")
-
                     if currentlyFlipped {
                         if swipingLeft {
                             frontDegrees = -90
@@ -94,7 +87,6 @@ struct Card<V1, V2, V3, V4>: View
                             }
                             if backDegrees > 90 { currentlyFlipped = false }
                         }
-                        print("backDegrees = \(backDegrees)")
                     } else {
                         if swipingLeft {
                             backDegrees = -90
@@ -113,7 +105,6 @@ struct Card<V1, V2, V3, V4>: View
                             }
                             if frontDegrees > 90 { currentlyFlipped = true }
                         }
-                        print("frontDegrees = \(frontDegrees)")
                     }
 
                     newDrag = false
