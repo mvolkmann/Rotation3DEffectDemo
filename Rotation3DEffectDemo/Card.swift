@@ -15,8 +15,7 @@ struct Card<V1, V2, V3, V4>: View
     @State private var frontDegrees = 0.0 // goes from 0 to -90
 
     @State private var currentlyFlipped = false
-    @State private var initiallyFlipped = true
-    @State private var newDrag = true
+    @State private var initiallyFlipped: Bool?
 
     let cardHeight = 400.0
     // A standard playing card is 2.5" wide and 3.5" tall.
@@ -56,7 +55,8 @@ struct Card<V1, V2, V3, V4>: View
         .gesture(
             DragGesture()
                 .onChanged {
-                    if newDrag { initiallyFlipped = currentlyFlipped }
+                    if initiallyFlipped ==
+                        nil { initiallyFlipped = currentlyFlipped }
 
                     let x = $0.location.x
                     guard x >= 0, x <= cardWidth else { return }
@@ -72,7 +72,7 @@ struct Card<V1, V2, V3, V4>: View
                     if currentlyFlipped {
                         if swipingLeft {
                             frontDegrees = -90
-                            if initiallyFlipped {
+                            if let initiallyFlipped, initiallyFlipped {
                                 backDegrees = -deltaDegrees
                             } else {
                                 backDegrees = 180 - deltaDegrees
@@ -80,7 +80,7 @@ struct Card<V1, V2, V3, V4>: View
                             if backDegrees < -90 { currentlyFlipped = false }
                         } else {
                             frontDegrees = 90
-                            if initiallyFlipped {
+                            if let initiallyFlipped, initiallyFlipped {
                                 backDegrees = deltaDegrees
                             } else {
                                 backDegrees = deltaDegrees - 180
@@ -90,7 +90,7 @@ struct Card<V1, V2, V3, V4>: View
                     } else {
                         if swipingLeft {
                             backDegrees = -90
-                            if initiallyFlipped {
+                            if let initiallyFlipped, initiallyFlipped {
                                 frontDegrees = 180 - deltaDegrees
                             } else {
                                 frontDegrees = -deltaDegrees
@@ -98,7 +98,7 @@ struct Card<V1, V2, V3, V4>: View
                             if frontDegrees < -90 { currentlyFlipped = true }
                         } else {
                             backDegrees = 90
-                            if initiallyFlipped {
+                            if let initiallyFlipped, initiallyFlipped {
                                 frontDegrees = deltaDegrees - 180
                             } else {
                                 frontDegrees = deltaDegrees
@@ -106,8 +106,6 @@ struct Card<V1, V2, V3, V4>: View
                             if frontDegrees > 90 { currentlyFlipped = true }
                         }
                     }
-
-                    newDrag = false
                 }
                 .onEnded { _ in
                     withAnimation(.spring()) {
@@ -116,7 +114,7 @@ struct Card<V1, V2, V3, V4>: View
                         } else {
                             frontDegrees = 0
                         }
-                        newDrag = true
+                        initiallyFlipped = nil // unset
                     }
                 }
         )
