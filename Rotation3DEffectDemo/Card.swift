@@ -14,7 +14,9 @@ struct Card<V1, V2, V3, V4>: View
     @State private var backDegrees = 90.0 // goes from 90 to 0
     @State private var frontDegrees = 0.0 // goes from 0 to -90
 
-    @State private var isFlipped = false
+    @State private var currentlyFlipped = false
+    @State private var initiallyFlipped = true
+    @State private var newDrag = true
 
     typealias Axis = (x: CGFloat, y: CGFloat, z: CGFloat)
 
@@ -53,6 +55,8 @@ struct Card<V1, V2, V3, V4>: View
         .gesture(
             DragGesture()
                 .onChanged {
+                    if newDrag { initiallyFlipped = currentlyFlipped }
+
                     let x = $0.location.x
                     guard x >= 0, x <= cardWidth else { return }
 
@@ -64,45 +68,72 @@ struct Card<V1, V2, V3, V4>: View
                     let boundedPercent = max(min(percent, 1), 0)
                     let deltaDegrees = boundedPercent * 90 * 2
 
-                    print("isFlipped = \(isFlipped)")
-                    if isFlipped {
-                        // frontDegrees = 90 * (swipingLeft ? -1 : 1)
-                        backDegrees = (360 - deltaDegrees) *
-                            (swipingLeft ? 1 : -1)
-                        print("backDegrees = \(backDegrees)")
-                        /*
-                         if abs(backDegrees) >= 90 {
-                             frontDegrees = 90 * (swipingLeft ? 1 : -1)
-                             backDegrees = 90 * (swipingLeft ? -1 : 1)
-                             isFlipped = false
-                         }
-                          */
-                    } else {
-                        // backDegrees = 90 * (swipingLeft ? 1 : -1)
-                        frontDegrees = deltaDegrees * (swipingLeft ? -1 : 1)
-                        print("frontDegrees = \(frontDegrees)")
-                        if abs(frontDegrees) >= 90 {
-                            backDegrees = 90 * (swipingLeft ? 1 : -1)
-                            frontDegrees = 90 * (swipingLeft ? -1 : 1)
-                            isFlipped = true
+                    // There are four cases to consider:
+                    // 1) not flipped and swiping left
+                    // 2) not flipped and swiping right
+                    // 3) flipped and swiping left
+                    // 4) flipped and swiping right
+                    print("initiallyFlipped = \(initiallyFlipped)")
+                    print("currentlyFlipped = \(currentlyFlipped)")
+
+                    if currentlyFlipped {
+                        if swipingLeft {
+                            frontDegrees = -90
+                            if initiallyFlipped {
+                                backDegrees = -deltaDegrees
+                            } else {
+                                backDegrees = 180 - deltaDegrees
+                            }
+                            if backDegrees < -90 { currentlyFlipped = true }
+                        } else {
+                            frontDegrees = 90
+                            if initiallyFlipped {
+                                backDegrees = deltaDegrees
+                            } else {
+                                backDegrees = deltaDegrees - 180
+                            }
+                            if backDegrees > 90 { currentlyFlipped = true }
                         }
+                        print("backDegrees = \(backDegrees)")
+                    } else {
+                        if swipingLeft {
+                            backDegrees = -90
+                            if initiallyFlipped {
+                                frontDegrees = 180 - deltaDegrees
+                            } else {
+                                frontDegrees = -deltaDegrees
+                            }
+                            if frontDegrees < -90 { currentlyFlipped = true }
+                        } else {
+                            backDegrees = 90
+                            if initiallyFlipped {
+                                frontDegrees = 180 - deltaDegrees
+                            } else {
+                                frontDegrees = deltaDegrees
+                            }
+                            if frontDegrees > 90 { currentlyFlipped = true }
+                        }
+                        print("frontDegrees = \(frontDegrees)")
                     }
+
+                    newDrag = false
                 }
                 .onEnded { _ in
                     withAnimation(.spring()) {
-                        if isFlipped {
+                        if currentlyFlipped {
                             backDegrees = 0
                         } else {
                             frontDegrees = 0
                         }
+                        newDrag = true
                     }
                 }
         )
     }
 
     private func flip() {
-        isFlipped.toggle()
-        if isFlipped {
+        currentlyFlipped.toggle()
+        if currentlyFlipped {
             withAnimation(.linear(duration: duration)) {
                 frontDegrees = -90
             }
